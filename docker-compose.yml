@@ -33,8 +33,8 @@ services:
     image: postgres:13
     container_name: bars_db
     hostname: bars_db
-    ports:
-      - 2345:5432 # just for debugging
+    expose:
+      - 5432
     volumes:
       - pgdata:/var/lib/postgresql/data
     environment:
@@ -42,7 +42,6 @@ services:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=postgres
     networks:
-      - default # just for debugging
       - postgres_internal
     restart: always
 
@@ -55,7 +54,3 @@ networks:
   default:
   postgres_internal:
     internal: true
-
-
-
-
