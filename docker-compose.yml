@@ -1,0 +1,61 @@
+version: "3"
+
+services:
+  bars_api:
+    build: .
+    container_name: bars_api
+    env_file:
+      - .env
+    ports:
+      - 7020:7020
+    depends_on:
+      - bars_db
+    restart: always
+    networks:
+      - default
+      - postgres_internal
+
+
+  bars_adminer:
+    image: adminer
+    container_name: bars_adminer
+    restart: always
+    ports:
+      - 11111:8080
+    depends_on:
+      - bars_db
+    networks:
+      - default
+      - postgres_internal
+
+
+  psql:
+    image: postgres:13
+    container_name: bars_db
+    hostname: bars_db
+    ports:
+      - 2345:5432 # just for debugging
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    networks:
+      - default # just for debugging
+      - postgres_internal
+    restart: always
+
+
+volumes:
+  pgdata:
+
+
+networks:
+  default:
+  postgres_internal:
+    internal: true
+
+
+
+
