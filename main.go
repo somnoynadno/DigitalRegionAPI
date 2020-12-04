@@ -1,6 +1,7 @@
 package main
 
 import (
+	"DigitalRegionAPI/controller"
 	"DigitalRegionAPI/db"
 	"DigitalRegionAPI/middleware"
 	u "DigitalRegionAPI/utils"
@@ -19,8 +20,8 @@ func main() {
 	router := mux.NewRouter()
 
 	router.HandleFunc("/api/auth/login", nil).Methods(http.MethodPost, http.MethodOptions)
-	router.HandleFunc("/api/data/query", nil).Methods(http.MethodGet, http.MethodOptions)
-	router.HandleFunc("/api/data/send_csv", nil).Methods(http.MethodPost, http.MethodOptions)
+	router.HandleFunc("/api/data/query", controller.QueryData).Methods(http.MethodGet, http.MethodOptions)
+	router.HandleFunc("/api/data/send_csv", controller.ImportDataCSV).Methods(http.MethodPost, http.MethodOptions)
 	router.HandleFunc("/api/ping", u.HandlePing).Methods(http.MethodGet, http.MethodPost, http.MethodOptions)
 
 	router.Use(middleware.CORS)
@@ -39,7 +40,7 @@ func main() {
 		port = "7020" // localhost
 	}
 
-	log.Info("listening on: ", port)
+	log.Info("Listening on: ", port)
 
 	err := http.ListenAndServe(":"+port, router)
 	if err != nil {

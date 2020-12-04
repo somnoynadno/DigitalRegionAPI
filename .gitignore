@@ -16,3 +16,6 @@
 
 # Environment file
 .env
+
+# Temp data folder
+data/
