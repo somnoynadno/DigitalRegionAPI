@@ -29,7 +29,7 @@ services:
       - postgres_internal
 
 
-  psql:
+  bars_db:
     image: postgres:13
     container_name: bars_db
     hostname: bars_db
