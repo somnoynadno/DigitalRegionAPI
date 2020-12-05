@@ -46,6 +46,7 @@ var ImportDataCSV = func(w http.ResponseWriter, r *http.Request) {
 	tx := db.GetDB().Begin()
 	defer tx.Rollback()
 
+	schools := make(map[string]uint)
 	for i, v := range records {
 		if i > 0 {
 			d := entities.Data{}
@@ -83,12 +84,30 @@ var ImportDataCSV = func(w http.ResponseWriter, r *http.Request) {
 			}
 			d.IsPassed = uint(value)
 
+			if _, ok := schools[d.School]; ok {
+				schools[d.School]++
+			} else {
+				schools[d.School] = 0
+			}
+
 			err = tx.Create(&d).Error
 			if err != nil {
 				u.HandleInternalError(w, err)
 				return
 			}
 		}
+	}
+
+	var users []entities.User
+	err = tx.Find(&users).Error
+	if err != nil {
+		u.HandleInternalError(w, err)
+		return
+	}
+
+	for _, v := range users {
+		v.DataUploads += schools[v.School]
+		tx.Save(v)
 	}
 
 	tx.Commit()

@@ -14,6 +14,7 @@ var QueryUsers = func(w http.ResponseWriter, r *http.Request) {
 	err := db.GetDB().Find(&data).Error
 	if err != nil {
 		u.HandleInternalError(w, err)
+		return
 	}
 
 	res, err := json.Marshal(data)
