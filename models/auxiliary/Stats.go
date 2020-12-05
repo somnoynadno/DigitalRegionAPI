@@ -6,6 +6,8 @@ type Stats struct {
 	NumberOfTopWorks int
 	TopSchool        string
 	WorstSchool      string
+	TopScore         int
+	WorstScore       int
 	TopSubject       string
 	WorstSubject     string
 	AverageGrade     float64

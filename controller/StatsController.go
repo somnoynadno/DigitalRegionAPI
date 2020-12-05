@@ -10,7 +10,8 @@ import (
 )
 
 type School struct {
-	Name string
+	Name  string
+	Score float64
 }
 
 type Subject struct {
@@ -54,11 +55,11 @@ var GetStats = func(w http.ResponseWriter, r *http.Request) {
 		Select("avg(grade) as average").First(&averageGrade)
 	db.Table("data").Where("exam = ?", exam).Where("period = ?", period).
 		Where("score = 100").Count(&numberOfTopWorks)
-	db.Table("data").Select("school as name").
+	db.Table("data").Select("school as name, avg(score) as score").
 		Where("exam = ?", exam).Where("period = ?", period).
 		Order("avg(score) desc").
 		Group("school").First(&topSchool)
-	db.Table("data").Select("school as name").
+	db.Table("data").Select("school as name, avg(score) as score").
 		Where("exam = ?", exam).Where("period = ?", period).
 		Order("avg(score) asc").
 		Group("school").First(&worstSchool)
@@ -86,6 +87,8 @@ var GetStats = func(w http.ResponseWriter, r *http.Request) {
 		TopStudent: topStudent.Name,
 		TopTotalScore: topStudent.Score,
 		PassedPercentage: float64(passedWorks * 100 / totalWorks),
+		TopScore: int(topSchool.Score),
+		WorstScore: int(worstSchool.Score),
 	}
 
 	res, err := json.Marshal(data)
