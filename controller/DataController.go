@@ -15,6 +15,15 @@ import (
 	"strings"
 )
 
+func stringInSlice(a string, list []string) bool {
+	for _, b := range list {
+		if b == a {
+			return true
+		}
+	}
+	return false
+}
+
 var ImportDataCSV = func(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -56,12 +65,29 @@ var ImportDataCSV = func(w http.ResponseWriter, r *http.Request) {
 			d.Exam = v[legend["Экзамен"]]
 			d.Subject = v[legend["Предмет"]]
 
+			boolVal := stringInSlice(d.Exam, []string{"ОГЭ", "EГЭ"})
+			if boolVal == false {
+				u.HandleBadRequest(w, errors.New("bad exam"))
+				return
+			}
+
+			boolVal = stringInSlice(d.Subject, []string{"Математика", "Русский язык", "Физика", "Химия", "Биология", "Литература", "География", "История", "Информатика", "Обществознание", "Информатика", "Ангийский язык", "Французский язык", "Немецкий язык", "Испанский язык", "Китайский язык"})
+			if boolVal == false {
+				u.HandleBadRequest(w, errors.New("bad subject"))
+				return
+			}
+
 			value, err := strconv.ParseUint(v[legend["Период"]], 10, 64)
 			if err != nil {
 				u.HandleBadRequest(w, errors.New("bad period"))
 				return
 			}
 			d.Period = uint(value)
+
+			if d.Period < 2001 || d.Period >= 2020 {
+				u.HandleBadRequest(w, errors.New("bad period"))
+				return
+			}
 
 			value, err = strconv.ParseUint(v[legend["Баллы"]], 10, 64)
 			if err != nil {
@@ -70,6 +96,11 @@ var ImportDataCSV = func(w http.ResponseWriter, r *http.Request) {
 			}
 			d.Score = uint(value)
 
+			if d.Score > 100 || d.Score < 0 {
+				u.HandleBadRequest(w, errors.New("bad score"))
+				return
+			}
+
 			value, err = strconv.ParseUint(v[legend["Оценка"]], 10, 64)
 			if err != nil {
 				u.HandleBadRequest(w, errors.New("bad grade"))
@@ -77,12 +108,22 @@ var ImportDataCSV = func(w http.ResponseWriter, r *http.Request) {
 			}
 			d.Grade = uint(value)
 
+			if d.Grade > 5 || d.Grade < 2 {
+				u.HandleBadRequest(w, errors.New("bad grade"))
+				return
+			}
+
 			value, err = strconv.ParseUint(v[legend["Признак успешной сдачи экзамена"]], 10, 64)
 			if err != nil {
 				u.HandleBadRequest(w, errors.New("bad parameter"))
 				return
 			}
 			d.IsPassed = uint(value)
+
+			if d.IsPassed != 1 && d.IsPassed != 0 {
+				u.HandleBadRequest(w, errors.New("bad passed"))
+				return
+			}
 
 			if _, ok := schools[d.School]; ok {
 				schools[d.School]++
