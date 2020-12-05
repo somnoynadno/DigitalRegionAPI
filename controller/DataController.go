@@ -45,6 +45,7 @@ var ImportDataCSV = func(w http.ResponseWriter, r *http.Request) {
 	records, err := res.ReadAll()
 	if err != nil {
 		u.HandleInternalError(w, err)
+		return
 	}
 
 	legend := make(map[string]int)
@@ -65,7 +66,7 @@ var ImportDataCSV = func(w http.ResponseWriter, r *http.Request) {
 			d.Exam = v[legend["Экзамен"]]
 			d.Subject = v[legend["Предмет"]]
 
-			boolVal := stringInSlice(d.Exam, []string{"ОГЭ", "EГЭ"})
+			boolVal := stringInSlice(d.Exam, []string{"ОГЭ", "ЕГЭ"})
 			if boolVal == false {
 				u.HandleBadRequest(w, errors.New("bad exam"))
 				return
