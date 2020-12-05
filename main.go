@@ -21,6 +21,7 @@ func main() {
 
 	router.HandleFunc("/api/auth/login", controller.Authenticate).Methods(http.MethodPost, http.MethodOptions)
 	router.HandleFunc("/api/data/query", controller.QueryData).Methods(http.MethodGet, http.MethodOptions)
+	router.HandleFunc("/api/data/stats", controller.GetStats).Methods(http.MethodGet, http.MethodOptions)
 	router.HandleFunc("/api/data/send_csv", controller.ImportDataCSV).Methods(http.MethodPost, http.MethodOptions)
 	router.HandleFunc("/api/users/list", controller.QueryUsers).Methods(http.MethodGet, http.MethodOptions)
 	router.HandleFunc("/api/ping", u.HandlePing).Methods(http.MethodGet, http.MethodPost, http.MethodOptions)
