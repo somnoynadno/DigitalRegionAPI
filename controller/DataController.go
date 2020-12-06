@@ -53,6 +53,16 @@ var ImportDataCSV = func(w http.ResponseWriter, r *http.Request) {
 		legend[v] = i
 	}
 
+	if len(records) <= 1 {
+		u.HandleBadRequest(w, errors.New("bad rec"))
+		return
+	}
+
+	if len(legend) != 8 {
+		u.HandleBadRequest(w, errors.New("bad legends"))
+		return
+	}
+
 	tx := db.GetDB().Begin()
 	defer tx.Rollback()
 
