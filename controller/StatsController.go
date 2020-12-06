@@ -76,6 +76,11 @@ var GetStats = func(w http.ResponseWriter, r *http.Request) {
 		Order("sum(score) desc").
 		Group("student").First(&topStudent)
 
+	passedPercentage := 0.0
+	if totalWorks > 0 {
+		passedPercentage = float64(passedWorks * 100 / totalWorks)
+	}
+
 	data := auxiliary.Stats{
 		TotalWorks:  totalWorks,
 		TopSchool:   topSchool.Name,
@@ -86,7 +91,7 @@ var GetStats = func(w http.ResponseWriter, r *http.Request) {
 		AverageGrade: averageGrade.Average,
 		TopStudent: topStudent.Name,
 		TopTotalScore: topStudent.Score,
-		PassedPercentage: float64(passedWorks * 100 / totalWorks),
+		PassedPercentage: passedPercentage,
 		TopScore: int(topSchool.Score),
 		WorstScore: int(worstSchool.Score),
 	}
